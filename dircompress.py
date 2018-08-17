@@ -12,4 +12,10 @@ def parse_arguments():
   return parser
 
 args = parse_arguments()
-print args.parse_args()
+#print args.parse_args()
+dir_name = args.parse_args().dir_name
+email = args.parse_args().email
+file_size = args.parse_args().file_size
+DRYRUN = args.parse_args().dry_run
+# print dir_name + " | " + email + " | " + file_size + " | "
+# print DRYRUN
