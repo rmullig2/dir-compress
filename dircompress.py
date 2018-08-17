@@ -3,6 +3,7 @@ import os
 import argparse
 import sys
 import re
+import magic
 
 def parse_arguments():
   """
@@ -72,16 +73,26 @@ def create_lists(filelist, file_size):
   files that are smaller than the minimum file size
   files that will not be compressed due to expected small compression ratio
   files to be compressed.
+  The pyton magic library is used to determine each file's type
   """
   too_small_files = []
   small_ratio_files = []
   good_files = []
   
-  for file in filelist:
-    if os.path.getsize(file) < file_size:
-      too_small_files.append(file)
+  m = magic.open(magic.MAGIC_NONE)    # Set up a variable for the magic library
+  m.load()
+  
+  excluded_files = 'JPG|PNG|GIF|special|BitTorrent|Zip|gzip'    # Specify file types that are not to be compressed
+  
+  for filename in filelist:
+    if m.file(filename) == 'directory':       # If it is a directory and not a file then ignore it
+      continue
+    elif re.search(excluded_files, m.file(filename)) != None:
+      small_ratio_files.append(filename)
+    elif os.path.getsize(filename) < file_size:
+      too_small_files.append(filename)
     else:
-      good_files.append(file)
+      good_files.append(filename)
   
   return [too_small_files, small_ratio_files, good_files]
 
@@ -99,3 +110,6 @@ print good_files
 print
 print "Files too small:"
 print too_small_files
+print
+print "Excluded files:"
+print small_ratio_files
