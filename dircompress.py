@@ -66,6 +66,19 @@ def get_files(dir_name):
       filelist.append(os.path.join(root,file))
   return filelist
 
+def create_lists(filelist, file_size):
+  """
+  This function will create arrays containing:
+  files that are smaller than the minimum file size
+  files that will not be compressed due to expected small compression ratio
+  files to be compressed.
+  """
+  too_small_files = []
+  small_ratio_files = []
+  good_files = []
+  
+  return [too_small_files, small_ratio_files, good_files]
+
 args = parse_arguments()
 dir_name = args.parse_args().dir_name
 email = args.parse_args().email
