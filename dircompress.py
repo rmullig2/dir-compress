@@ -2,6 +2,7 @@
 import os
 import argparse
 import sys
+import re
 
 def parse_arguments():
   parser = argparse.ArgumentParser(version="Version 1.0")
@@ -16,9 +17,12 @@ def check_arguments(dir_name, email, file_size):
   if not os.path.isdir(dir_name):
     print "Invalid path name: " + dir_name
     sys.exit(2)
+  if re.match("[^@]+@[^@]+\.[^@]+", email) == None:
+    print 'Invalid email address: ' + email
+    sys.exit(2)
   else:
     print "Good"
-  return true
+  return True
 
 args = parse_arguments()
 #print args.parse_args()
