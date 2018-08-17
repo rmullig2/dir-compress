@@ -31,7 +31,7 @@ def check_arguments(dir_name, email, file_size):
     print 'Invalid email address: ' + email
     sys.exit(2)
   if re.match("[0-9]+\.?[0-9MmGgKk]*$", file_size) == None:     # This allows floating point values with K, M, G suffix
-    print "Invalid file size"
+    print "Invalid file size, must be integer or floating point value followed by optional suffix (K, M, G)"
     sys.exit(2)
   return
 
@@ -50,17 +50,13 @@ def convert_size(file_size):
     multiplier = 1073741824.0
   else:
     multiplier = 1
-  return int(float(re.match('[0-9]*\.?[0-9]*', file_size).group(0)) * multiplier)
+  return int(float(re.match('[0-9]*\.?[0-9]*', file_size).group(0)) * multiplier)   # Return byte size as integer
 
 
 args = parse_arguments()
-#print args.parse_args()
 dir_name = args.parse_args().dir_name
 email = args.parse_args().email
 file_size = args.parse_args().file_size
 DRYRUN = args.parse_args().dry_run
 check_arguments(dir_name, email, file_size)
-# print dir_name + " | " + email + " | " + file_size + " | "
-# print DRYRUN
 file_size = convert_size(file_size)
-print file_size
