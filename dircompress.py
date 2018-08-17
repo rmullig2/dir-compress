@@ -20,9 +20,10 @@ def check_arguments(dir_name, email, file_size):
   if re.match("[^@]+@[^@]+\.[^@]+", email) == None:
     print 'Invalid email address: ' + email
     sys.exit(2)
-  else:
-    print "Good"
-  return True
+  if re.match("[0-9]*[0-9MmGgKk]?$", file_size) == None:
+    print "Invalid file size"
+    sys.exit(2)
+  return
 
 args = parse_arguments()
 #print args.parse_args()
