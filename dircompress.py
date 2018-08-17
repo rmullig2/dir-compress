@@ -73,3 +73,4 @@ file_size = args.parse_args().file_size
 DRYRUN = args.parse_args().dry_run
 check_arguments(dir_name, email, file_size)
 file_size = convert_size(file_size)
+filelist = get_files(dir_name)
