@@ -83,7 +83,7 @@ def create_lists(filelist, file_size):
   m = magic.open(magic.MAGIC_NONE)    # Set up a variable for the magic library
   m.load()
   
-  excluded_files = 'JPG|PNG|GIF|special|BitTorrent|Zip|gzip'    # Specify file types that are not to be compressed
+  excluded_files = 'JPG|PNG|GIF|special|BitTorrent|Zip|gzip|MPEG|ISO|img'    # Specify file types that are not to be compressed
   
   for filename in filelist:
     if m.file(filename) == 'directory':       # If it is a directory and not a file then ignore it
@@ -106,11 +106,3 @@ check_arguments(dir_name, email, file_size)
 file_size = convert_size(file_size)
 filelist = get_files(dir_name)
 [too_small_files, small_ratio_files, good_files] = create_lists(filelist, file_size)
-print "Files to be compressed:"
-print good_files
-print
-print "Files too small:"
-print too_small_files
-print
-print "Excluded files:"
-print small_ratio_files
