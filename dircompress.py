@@ -5,6 +5,11 @@ import sys
 import re
 
 def parse_arguments():
+  """
+  This function utilizes the argparse library to parse the incoming arguments.
+  There are four defined arguments: directory name, email address, minimum file size, and dry run option.
+  The library automatically generates the help option and version information.
+  """
   parser = argparse.ArgumentParser(version="Version 1.0")
   parser.add_argument('-d', action='store', dest='dir_name', help='Specifies the directory for compression', required=True)
   parser.add_argument('-e', action='store', dest='email', help='Specifies the email address', required=True)
@@ -14,6 +19,11 @@ def parse_arguments():
   return parser
 
 def check_arguments(dir_name, email, file_size):
+  """
+  This function will validate the parameters passed for directory name, email address, and minimum file size.
+  The os library is used to check for a valid directory.
+  Regular expressions are defined for checking the email address and minimum file size.
+  """
   if not os.path.isdir(dir_name):
     print "Invalid path name: " + dir_name
     sys.exit(2)
