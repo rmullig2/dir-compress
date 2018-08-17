@@ -1,9 +1,10 @@
 #!/usr/bin/python
-import os
-import argparse
-import sys
-import re
-import magic
+try:
+  import os, argparse, sys, re, magic
+except ImportError:
+  print "One or more modules is unavailable, please install the necessary Python libraries"
+  sys.exit(1)
+
 
 def parse_arguments():
   """
