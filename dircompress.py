@@ -87,7 +87,7 @@ def create_lists(filelist, file_size):
   for filename in filelist:
     if m.file(filename) == 'directory':       # If it is a directory and not a file then ignore it
       continue
-    elif re.search(excluded_files, m.file(filename)) != None:
+    elif re.search(excluded_files, m.file(filename)) != None:     # Check if file type should be excluded
       small_ratio_files.append(filename)
     elif os.path.getsize(filename) < file_size:
       too_small_files.append(filename)
