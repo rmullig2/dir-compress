@@ -77,6 +77,12 @@ def create_lists(filelist, file_size):
   small_ratio_files = []
   good_files = []
   
+  for file in filelist:
+    if os.path.getsize(file) < file_size:
+      too_small_files.append(file)
+    else:
+      good_files.append(file)
+  
   return [too_small_files, small_ratio_files, good_files]
 
 args = parse_arguments()
@@ -87,3 +93,9 @@ DRYRUN = args.parse_args().dry_run
 check_arguments(dir_name, email, file_size)
 file_size = convert_size(file_size)
 filelist = get_files(dir_name)
+[too_small_files, small_ratio_files, good_files] = create_lists(filelist, file_size)
+print "Files to be compressed:"
+print good_files
+print
+print "Files too small:"
+print too_small_files
