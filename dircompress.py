@@ -52,6 +52,19 @@ def convert_size(file_size):
     multiplier = 1
   return int(float(re.match('[0-9]*\.?[0-9]*', file_size).group(0)) * multiplier)   # Return byte size as integer
 
+def get_files(dir_name):
+  """
+  This function will recursively generate a list of files from the directory that was passed in.
+  It returns this list as an array.
+  The walk module from the os library is utilized to retreive the file names.
+  """
+  filelist = []
+  for root, dirs, files in os.walk(dir_name):
+    for subdir in dirs:
+      filelist.append(os.path.join(root, subdir))
+    for file in files:
+      filelist.append(os.path.join(root,file))
+  return filelist
 
 args = parse_arguments()
 dir_name = args.parse_args().dir_name
