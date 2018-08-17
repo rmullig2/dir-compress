@@ -30,7 +30,7 @@ def check_arguments(dir_name, email, file_size):
   if re.match("[^@]+@[^@]+\.[^@]+", email) == None:
     print 'Invalid email address: ' + email
     sys.exit(2)
-  if re.match("[0-9]*[0-9MmGgKk]?$", file_size) == None:
+  if re.match("[0-9]+\.?[0-9MmGgKk]*$", file_size) == None:     # This allows floating point values with K, M, G suffix
     print "Invalid file size"
     sys.exit(2)
   return
@@ -43,14 +43,14 @@ def convert_size(file_size):
   """
   last_char = file_size[-1].upper()
   if last_char == 'K':
-    multiplier = 1024
+    multiplier = 1024.0
   elif last_char == 'M':
-    multiplier = 1048576
+    multiplier = 1048576.0
   elif last_char == 'G':
-    multiplier = 1073741824
+    multiplier = 1073741824.0
   else:
     multiplier = 1
-  return int(re.match('[0-9]*', file_size).group(0)) * multiplier
+  return int(float(re.match('[0-9]*\.?[0-9]*', file_size).group(0)) * multiplier)
 
 
 args = parse_arguments()
@@ -63,4 +63,4 @@ check_arguments(dir_name, email, file_size)
 # print dir_name + " | " + email + " | " + file_size + " | "
 # print DRYRUN
 file_size = convert_size(file_size)
-#print file_size
+print file_size
