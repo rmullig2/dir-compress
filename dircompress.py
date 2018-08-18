@@ -1,6 +1,6 @@
 #!/usr/bin/python
 try:
-  import os, argparse, sys, re, magic
+  import os, argparse, sys, re, magic, gzip
 except ImportError:
   print "One or more modules is unavailable, please install the necessary Python libraries"
   sys.exit(1)
@@ -96,6 +96,16 @@ def create_lists(filelist, file_size):
       good_files.append(filename)
   
   return [too_small_files, small_ratio_files, good_files]
+
+def zip_files(filelist, dryrun):
+  """
+  This function takes in a list of files to be zipped and attempts to compress them.
+  If dry run is indicated then the files will be copied to /tmp, zipped, and deleted after the compressed size is recorded.
+  It returns an array of zipped files and the total space saved.
+  """
+  for filename in filelist:
+    outfilename = filename
+    output = gzip.open(outfilename, 'wb')
 
 args = parse_arguments()
 dir_name = args.parse_args().dir_name
