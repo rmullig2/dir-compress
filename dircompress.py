@@ -106,19 +106,21 @@ def zip_files(filelist, dryrun):
   zip_files = []
   saved_space = 0
   for filename in filelist:
-    input_file = open(filename, "r")
-    input_size = os.path.getsize(input_file)
-    zip_name = (filename, "gz")
-    zip_name = ".".join(zip_name)
-    output_file = gzip.open(zip_name, 'wb')
+    input_file = open(filename, "r")                # Open each file in read-only mode
+    input_size = os.path.getsize(input_file)        # Calculate the file size before compression
+    content = input_file.read()                     # Read in the contents of the input file
+    zip_name = (filename, "gz")                     
+    zip_name = ".".join(zip_name)                   # This line creates a .gz file using the same file name
+    output_file = gzip.open(zip_name, 'wb')         # Open the .gz file as read-write block file
     try:
-      output_file.write(input_file)
+      output_file.write(content)                    # Attempt to compress the contents of the input file
     finally:
-      output_size = os.path.getsize(output_file)
-      zip_files.append(filename)
+      output_size = os.path.getsize(output_file)    # Calculate the file size of the newly compressed file
+      zip_files.append(filename)                    # Add to list of successfully compressed files
       saved_space += input_size - output_size
     input_file.close()
     output_file.close()
+    return [zip_files, saved_space]
 
 args = parse_arguments()
 dir_name = args.parse_args().dir_name
