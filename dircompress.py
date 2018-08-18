@@ -106,7 +106,10 @@ def zip_files(filelist, dryrun=False):
   zip_files = []
   saved_space = 0
   for filename in filelist:
-    input_file = open(filename, "r")                # Open each file in read-only mode
+    try:
+      input_file = open(filename, "r+")             # Must be able to open each file in read-write mode
+    except:
+      continue                                      # Skip file if it is unable to open as read-write
     input_size = os.path.getsize(input_file)        # Calculate the file size before compression
     content = input_file.read()                     # Read in the contents of the input file
     zip_name = (filename, "gz")                     
