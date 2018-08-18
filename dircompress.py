@@ -97,7 +97,7 @@ def create_lists(filelist, file_size):
   
   return [too_small_files, small_ratio_files, good_files]
 
-def zip_files(filelist, dryrun):
+def zip_files(filelist, dryrun=False):
   """
   This function takes in a list of files to be zipped and attempts to compress them.
   If dry run is indicated then the files will be copied to /tmp, zipped, and deleted after the compressed size is recorded.
@@ -120,7 +120,11 @@ def zip_files(filelist, dryrun):
       saved_space += input_size - output_size
     input_file.close()
     output_file.close()
-    return [zip_files, saved_space]
+    if dryrun:                                      # For dry runs we keep the file and delete the compressed file
+      os.remove(filename)                           # For regular runs we keep  the compressed file and delete the file
+    else:
+      os.remove(zip_name)
+  return [zip_files, saved_space]
 
 args = parse_arguments()
 dir_name = args.parse_args().dir_name
