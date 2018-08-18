@@ -104,8 +104,10 @@ def zip_files(filelist, dryrun):
   It returns an array of zipped files and the total space saved.
   """
   for filename in filelist:
-    outfilename = filename
-    output = gzip.open(outfilename, 'wb')
+    input_file = open(filename, "r")
+    zip_name = (filename, "gz")
+    zip_name = ".".join(zip_name)
+    output_file = gzip.open(zip_name, 'wb')
 
 args = parse_arguments()
 dir_name = args.parse_args().dir_name
