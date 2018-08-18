@@ -110,7 +110,7 @@ def zip_files(filelist, dryrun=False):
       input_file = open(filename, "r+")             # Must be able to open each file in read-write mode
     except:
       continue                                      # Skip file if it is unable to open as read-write
-    input_size = os.path.getsize(input_file)        # Calculate the file size before compression
+    input_size = os.path.getsize(filename)          # Calculate the file size before compression
     content = input_file.read()                     # Read in the contents of the input file
     zip_name = (filename, "gz")                     
     zip_name = ".".join(zip_name)                   # This line creates a .gz file using the same file name
@@ -118,15 +118,15 @@ def zip_files(filelist, dryrun=False):
     try:
       output_file.write(content)                    # Attempt to compress the contents of the input file
     finally:
-      output_size = os.path.getsize(output_file)    # Calculate the file size of the newly compressed file
+      output_size = os.path.getsize(zip_name)       # Calculate the file size of the newly compressed file
       zip_files.append(filename)                    # Add to list of successfully compressed files
       saved_space += input_size - output_size
     input_file.close()
     output_file.close()
     if dryrun:                                      # For dry runs we keep the file and delete the compressed file
-      os.remove(filename)                           # For regular runs we keep  the compressed file and delete the file
+      os.remove(zip_name)                           # For regular runs we keep  the compressed file and delete the file
     else:
-      os.remove(zip_name)
+      os.remove(filename)
   return [zip_files, saved_space]
 
 args = parse_arguments()
@@ -138,3 +138,4 @@ check_arguments(dir_name, email, file_size)
 file_size = convert_size(file_size)
 filelist = get_files(dir_name)
 [too_small_files, small_ratio_files, good_files] = create_lists(filelist, file_size)
+zip_files(good_files, DRYRUN)
