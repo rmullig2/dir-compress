@@ -103,11 +103,22 @@ def zip_files(filelist, dryrun):
   If dry run is indicated then the files will be copied to /tmp, zipped, and deleted after the compressed size is recorded.
   It returns an array of zipped files and the total space saved.
   """
+  zip_files = []
+  saved_space = 0
   for filename in filelist:
     input_file = open(filename, "r")
+    input_size = os.path.getsize(input_file)
     zip_name = (filename, "gz")
     zip_name = ".".join(zip_name)
     output_file = gzip.open(zip_name, 'wb')
+    try:
+      output_file.write(input_file)
+    finally:
+      output_size = os.path.getsize(output_file)
+      zip_files.append(filename)
+      saved_space += input_size - output_size
+    input_file.close()
+    output_file.close()
 
 args = parse_arguments()
 dir_name = args.parse_args().dir_name
