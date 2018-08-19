@@ -157,6 +157,7 @@ def create_report(compressed_files, saved_space, small_ratio_files, dir_name):
   for filename in compressed_files:         # Loop through and write out list of compressed files
     report_file.write(filename + "\n")
   report_file.write("\n")
+  report_file.write("Files skipped because of a small compression ratio\n")
   for filename in small_ratio_files:        # Loop through and write list of file with small compression ratio
     report_file.write(filename + "\n")
   report_file.write("\n")
