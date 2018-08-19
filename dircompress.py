@@ -174,13 +174,23 @@ def create_report(compressed_files, saved_space, small_ratio_files, dir_name):
   report_file.close()
 
 def send_report(email):
+  username = ""
+  password = ""
+  server = smtplib.SMTP("smtp.mail.yahoo.com",587)
+  hostname = socket.gethostname()
   report = open("/tmp/report.txt", "r")
   message = MIMEMultipart()
-  message['From'] = "socket.gethostname()"
+  message['From'] = hostname
   message["To"] = email
   message["Date"] = time.strftime("%b %d %Y")
   message["Subject"] = "Directory compression results"
   message.attach(MIMEText(report.read()))
+  report.close()
+  try:
+    server.login(username, password)
+    server.sendmail(hostname, email, message.as_string())
+  except:
+    print "Failed when attempting to send the email"
 
 args = parse_arguments()
 dir_name = args.parse_args().dir_name
@@ -196,3 +206,4 @@ filelist = get_files(dir_name)
 [too_small_files, small_ratio_files, good_files] = create_lists(filelist, file_size)
 [compressed_files, saved_space] = zip_files(good_files, DRYRUN)
 create_report(compressed_files, saved_space, small_ratio_files, dir_name)
+send_report(email)
