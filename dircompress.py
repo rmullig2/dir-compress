@@ -129,6 +129,13 @@ def zip_files(filelist, dryrun=False):
       os.remove(filename)
   return [compressed_files, saved_space]
 
+def display_message(message):
+  """
+  This runction displays status messages to the screen.
+  """
+  print time.ctime() + " " + message
+
+
 args = parse_arguments()
 dir_name = args.parse_args().dir_name
 email = args.parse_args().email
