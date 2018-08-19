@@ -1,8 +1,10 @@
 #!/usr/bin/python
 try:
-  import os, argparse, sys, re, magic, gzip, time
+  import os, argparse, sys, re, magic, gzip, time, smtplib, socket
+  from email.mime.multipart import MIMEMultipart
+  from email.mime.text import MIMEText
 except ImportError:
-  print "One or more modules is unavailable, please make sure these libraries are avaiable: os, argparse, sys, re, magic, gzip time"
+  print "One or more modules is unavailable, please make sure these libraries are avaiable: os, argparse, sys, re, magic, gzip, time, smtplib, email, socket"
   sys.exit(1)
 
 
@@ -170,6 +172,15 @@ def create_report(compressed_files, saved_space, small_ratio_files, dir_name):
   else:
     report_file.write("Space save: " +  str(saved_space) + "\n")
   report_file.close()
+
+def send_report(email):
+  report = open("/tmp/report.txt", "r")
+  message = MIMEMultipart()
+  message['From'] = "socket.gethostname()"
+  message["To"] = email
+  message["Date"] = time.strftime("%b %d %Y")
+  message["Subject"] = "Directory compression results"
+  message.attach(MIMEText(report.read()))
 
 args = parse_arguments()
 dir_name = args.parse_args().dir_name
