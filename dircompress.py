@@ -143,6 +143,10 @@ def display_message(message):
   print time.ctime() + " " + message
 
 def create_report(compressed_files, saved_space, small_ratio_files, dir_name):
+  """
+  This function will generate the report to be emailed.
+  The report will display a list of files that were compressed, files that were skipped due to small compression ration, and the total amount of saved space.
+  """
   kilo = 1024.0
   mega = 1048576.0
   giga = 1073741824.0
@@ -151,20 +155,21 @@ def create_report(compressed_files, saved_space, small_ratio_files, dir_name):
   report_file.write("Results for compression of " + dir_name + " at " + time.ctime())
   report_file.write("")
   report_file.write("Compressed files")
-  for filename in compressed_files:
+  for filename in compressed_files:         # Loop through and write out list of compressed files
     report_file.write(filename)
   report_file.write("")
-  for filename in small_ratio_files:
+  for filename in small_ratio_files:        # Loop through and write list of file with small compression ratio
     report_file.write(filename)
   report_file.write("")
-  if file_size > giga:
-    report_file.write("Space saved: " + "{:10.42}".format(file_size / giga))
-  elif file_size > mega:
-    report_file.write("Space saved: " + "{:10.42}".format(file_size / mega))
-  elif file_size > kilo:
-    report_file.write("Space saved: " + "{:10.42}".format(file_size / kilo))
+  if saved_space > giga:                     # These lines will format the space saved
+    report_file.write("Space saved: " + "{:10.42}".format(saved_space / giga))
+  elif saved_space > mega:
+    report_file.write("Space saved: " + "{:10.42}".format(saved_space / mega))
+  elif saved_space > kilo:
+    report_file.write("Space saved: " + "{:10.42}".format(saved_space / kilo))
   else:
-    report_file_write("Space save: " + str(file_size))
+    report_file_write("Space save: " + str(saved_space))
+  report_file.close()
 
 args = parse_arguments()
 dir_name = args.parse_args().dir_name
@@ -176,3 +181,4 @@ file_size = convert_size(file_size)
 filelist = get_files(dir_name)
 [too_small_files, small_ratio_files, good_files] = create_lists(filelist, file_size)
 [compressed_files, saved_space] = zip_files(good_files, DRYRUN)
+create_report(compressed_files, saved_space, small_ratio_files, dir_name)
