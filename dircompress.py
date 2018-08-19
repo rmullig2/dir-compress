@@ -2,7 +2,7 @@
 try:
   import os, argparse, sys, re, magic, gzip
 except ImportError:
-  print "One or more modules is unavailable, please install the necessary Python libraries"
+  print "One or more modules is unavailable, please make sure these libraries are avaiable: os, argparse, sys, re, magic, gzip"
   sys.exit(1)
 
 
@@ -60,6 +60,7 @@ def get_files(dir_name):
   It returns this list as an array.
   The walk module from the os library is utilized to retreive the file names.
   """
+  display_message("Generating a list of all files in the target directory.")
   filelist = []
   for root, dirs, files in os.walk(dir_name):
     for subdir in dirs:
@@ -76,6 +77,7 @@ def create_lists(filelist, file_size):
   files to be compressed.
   The pyton magic library is used to determine each file's type
   """
+  display_message("Determining which files can be compressed.")
   too_small_files = []
   small_ratio_files = []
   good_files = []
@@ -103,12 +105,16 @@ def zip_files(filelist, dryrun=False):
   If dry run is indicated then the files will be copied to /tmp, zipped, and deleted after the compressed size is recorded.
   It returns an array of zipped files and the total space saved.
   """
+  if dryrun:
+    display_message("Dryrun mode selected, files will not be modified.")
   compressed_files = []
   saved_space = 0
   for filename in filelist:
+    display_message("Attempting to open " + filename)
     try:
       input_file = open(filename, "r+")             # Must be able to open each file in read-write mode
     except:
+      display_message("Cannot compress " + filename)
       continue                                      # Skip file if it is unable to open as read-write
     input_size = os.path.getsize(filename)          # Calculate the file size before compression
     content = input_file.read()                     # Read in the contents of the input file
@@ -118,6 +124,7 @@ def zip_files(filelist, dryrun=False):
     try:
       output_file.write(content)                    # Attempt to compress the contents of the input file
     finally:
+      display_message("Successfully compressed " + filename)
       output_size = os.path.getsize(zip_name)       # Calculate the file size of the newly compressed file
       compressed_files.append(filename)                    # Add to list of successfully compressed files
       saved_space += input_size - output_size
