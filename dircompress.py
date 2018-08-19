@@ -142,6 +142,29 @@ def display_message(message):
   """
   print time.ctime() + " " + message
 
+def create_report(compressed_files, saved_space, small_ratio_files, dir_name):
+  kilo = 1024.0
+  mega = 1048576.0
+  giga = 1073741824.0
+  report_name = "/tmp/report.txt"
+  report_file = open(report_name, "w")
+  report_file.write("Results for compression of " + dir_name + " at " + time.ctime())
+  report_file.write("")
+  report_file.write("Compressed files")
+  for filename in compressed_files:
+    report_file.write(filename)
+  report_file.write("")
+  for filename in small_ratio_files:
+    report_file.write(filename)
+  report_file.write("")
+  if file_size > giga:
+    report_file.write("Space saved: " + "{:10.42}".format(file_size / giga))
+  elif file_size > mega:
+    report_file.write("Space saved: " + "{:10.42}".format(file_size / mega))
+  elif file_size > kilo:
+    report_file.write("Space saved: " + "{:10.42}".format(file_size / kilo))
+  else:
+    report_file_write("Space save: " + str(file_size))
 
 args = parse_arguments()
 dir_name = args.parse_args().dir_name
