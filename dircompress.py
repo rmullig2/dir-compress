@@ -1,8 +1,8 @@
 #!/usr/bin/python
 try:
-  import os, argparse, sys, re, magic, gzip
+  import os, argparse, sys, re, magic, gzip, time
 except ImportError:
-  print "One or more modules is unavailable, please make sure these libraries are avaiable: os, argparse, sys, re, magic, gzip"
+  print "One or more modules is unavailable, please make sure these libraries are avaiable: os, argparse, sys, re, magic, gzip time"
   sys.exit(1)
 
 
@@ -152,27 +152,29 @@ def create_report(compressed_files, saved_space, small_ratio_files, dir_name):
   giga = 1073741824.0
   report_name = "/tmp/report.txt"
   report_file = open(report_name, "w")
-  report_file.write("Results for compression of " + dir_name + " at " + time.ctime())
-  report_file.write("")
-  report_file.write("Compressed files")
+  report_file.write("Results for compression of " + dir_name + " at " + time.ctime() + "\n\n")
+  report_file.write("Compressed files\n")
   for filename in compressed_files:         # Loop through and write out list of compressed files
-    report_file.write(filename)
-  report_file.write("")
+    report_file.write(filename + "\n")
+  report_file.write("\n")
   for filename in small_ratio_files:        # Loop through and write list of file with small compression ratio
-    report_file.write(filename)
-  report_file.write("")
+    report_file.write(filename + "\n")
+  report_file.write("\n")
   if saved_space > giga:                     # These lines will format the space saved
-    report_file.write("Space saved: " + "{:10.42}".format(saved_space / giga))
+    report_file.write("Space saved: " + '%5.2f' % (saved_space / giga) + "G\n")
   elif saved_space > mega:
-    report_file.write("Space saved: " + "{:10.42}".format(saved_space / mega))
+    report_file.write("Space saved: " + '%3.1f' % (saved_space / mega) + "M\n")
   elif saved_space > kilo:
-    report_file.write("Space saved: " + "{:10.42}".format(saved_space / kilo))
+    report_file.write("Space saved: " + '%3.2f' % (saved_space / kilo) + "K\n")
   else:
-    report_file_write("Space save: " + str(saved_space))
+    report_file.write("Space save: " +  str(saved_space) + "\n")
   report_file.close()
 
 args = parse_arguments()
 dir_name = args.parse_args().dir_name
+if dir_name[-1] == '/':
+  dir_name = dir_name[:-1]
+print dir_name
 email = args.parse_args().email
 file_size = args.parse_args().file_size
 DRYRUN = args.parse_args().dry_run
