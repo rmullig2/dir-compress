@@ -174,9 +174,15 @@ def create_report(compressed_files, saved_space, small_ratio_files, dir_name):
   report_file.close()
 
 def send_report(email):
-  username = ""
-  password = ""
-  server = smtplib.SMTP("smtp.mail.yahoo.com",587)
+  """
+  This function will create an email and send it to the address specified when calling the file.
+  You should modify the username, password, and server settings to match your environment.
+  Example settings are hard-coded for demonstration purposes.
+  """
+  username = "your_username"                           # Change the username, password, and server settings
+  password = "your_password"
+  mailserver = "your_mailserver"
+  server = smtplib.SMTP(mailserver, 587)
   hostname = socket.gethostname()
   report = open("/tmp/report.txt", "r")
   message = MIMEMultipart()
@@ -186,7 +192,8 @@ def send_report(email):
   message["Subject"] = "Directory compression results"
   message.attach(MIMEText(report.read()))
   report.close()
-  try:
+  try:                                                # Print error message if sending failed
+    server.starttls()
     server.login(username, password)
     server.sendmail(hostname, email, message.as_string())
   except:
@@ -196,7 +203,6 @@ args = parse_arguments()
 dir_name = args.parse_args().dir_name
 if dir_name[-1] == '/':
   dir_name = dir_name[:-1]
-print dir_name
 email = args.parse_args().email
 file_size = args.parse_args().file_size
 DRYRUN = args.parse_args().dry_run
