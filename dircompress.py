@@ -199,17 +199,34 @@ def send_report(email):
   except:
     print "Failed when attempting to send the email"
 
-args = parse_arguments()
-dir_name = args.parse_args().dir_name
-if dir_name[-1] == '/':
-  dir_name = dir_name[:-1]
-email = args.parse_args().email
-file_size = args.parse_args().file_size
-DRYRUN = args.parse_args().dry_run
-check_arguments(dir_name, email, file_size)
-file_size = convert_size(file_size)
-filelist = get_files(dir_name)
-[too_small_files, small_ratio_files, good_files] = create_lists(filelist, file_size)
-[compressed_files, saved_space] = zip_files(good_files, DRYRUN)
-create_report(compressed_files, saved_space, small_ratio_files, dir_name)
-send_report(email)
+def main():
+  """
+  The main function follows these steps:
+  1. Parse the arguments passed in with the script execution.
+  2. Strip trailing / from path name if specified.
+  3. Save the arguments passsed into varialbes.
+  4. Verify the validity of the passed arguments.
+  5. Convert the minimum file size given into an integer value.
+  6. Prepare a list of files from the destination directory.
+  7. Determine if the files are below the specified file size or have a compression ratio too low to process.
+  8. Compress the suitable files in the given directory.
+  9. Create the report containing the compressed file, files with a low compression ratio, and tht total space saved.
+  10. Email the report to the passed email address.
+  """
+  args = parse_arguments()
+  dir_name = args.parse_args().dir_name
+  if dir_name[-1] == '/':
+    dir_name = dir_name[:-1]
+  email = args.parse_args().email
+  file_size = args.parse_args().file_size
+  DRYRUN = args.parse_args().dry_run
+  check_arguments(dir_name, email, file_size)
+  file_size = convert_size(file_size)
+  filelist = get_files(dir_name)
+  [too_small_files, small_ratio_files, good_files] = create_lists(filelist, file_size)
+  [compressed_files, saved_space] = zip_files(good_files, DRYRUN)
+  create_report(compressed_files, saved_space, small_ratio_files, dir_name)
+  send_report(email)
+  
+if __name__ == '__main__':
+  main()
