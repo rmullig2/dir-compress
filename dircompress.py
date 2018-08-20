@@ -1,10 +1,16 @@
 #!/usr/bin/python
+def display_message(message):
+  """
+  This runction displays status messages to the screen.
+  """
+  print time.ctime() + " " + message
+
 try:
   import os, argparse, sys, re, magic, gzip, time, smtplib, socket
   from email.mime.multipart import MIMEMultipart
   from email.mime.text import MIMEText
 except ImportError:
-  print "One or more modules is unavailable, please make sure these libraries are avaiable: os, argparse, sys, re, magic, gzip, time, smtplib, email, socket"
+  display_message("One or more modules is unavailable, please make sure these libraries are avaiable: os, argparse, sys, re, magic, gzip, time, smtplib, email, socket")
   sys.exit(1)
 
 
@@ -29,13 +35,13 @@ def check_arguments(dir_name, email, file_size):
   Regular expressions are defined for checking the email address and minimum file size.
   """
   if not os.path.isdir(dir_name):
-    print "Invalid path name: " + dir_name
+    display_message("Invalid path name: " + dir_name)
     sys.exit(2)
   if re.match("[^@]+@[^@]+\.[^@]+", email) == None:
-    print 'Invalid email address: ' + email
+    display_message('Invalid email address: ' + email)
     sys.exit(2)
   if re.match("[0-9]+\.?[0-9MmGgKk]*$", file_size) == None:     # This allows floating point values with K, M, G suffix
-    print "Invalid file size, must be integer or floating point value followed by optional suffix (K, M, G)"
+    display_message("Invalid file size, must be integer or floating point value followed by optional suffix (K, M, G)")
     sys.exit(2)
   return
 
@@ -138,12 +144,6 @@ def zip_files(filelist, dryrun=False):
       os.remove(filename)
   return [compressed_files, saved_space]
 
-def display_message(message):
-  """
-  This runction displays status messages to the screen.
-  """
-  print time.ctime() + " " + message
-
 def create_report(compressed_files, saved_space, small_ratio_files, dir_name):
   """
   This function will generate the report to be emailed.
@@ -197,7 +197,7 @@ def send_report(email):
     server.login(username, password)
     server.sendmail(hostname, email, message.as_string())
   except:
-    print "Failed when attempting to send the email"
+    display_message("Failed when attempting to send the email")
 
 def main():
   """
