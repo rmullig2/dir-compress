@@ -181,7 +181,7 @@ def send_report(email):
   """
   username = "your_username"                           # Change the username, password, and server settings
   password = "your_password"
-  mailserver = "your_mailserver"
+  mailserver = "mail.optonline.net"
   server = smtplib.SMTP(mailserver, 587)
   hostname = socket.gethostname()
   report = open("/tmp/report.txt", "r")
