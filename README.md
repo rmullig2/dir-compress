@@ -13,4 +13,8 @@ The program also takes in these option inputs:
   -h prints out the help  
   --dry-run creates the report and email it without doing the compression  
   
+The program will not send the report out in its current state. The email account configuration must be specified on lines 105-108. This information is unique to each deployment so it must be hardcoded in the script.
+  
+You can see the results of execution by reading the /tmp/dircompress.txt file. This file will log the output of every script execution.
+  
 ### Copyright 2018 by Ray Mulligan ###
