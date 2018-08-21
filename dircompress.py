@@ -6,11 +6,11 @@ def display_message(message):
   print time.ctime() + " " + message
 
 try:
-  import os, argparse, sys, re, magic, gzip, time, smtplib, socket
+  import os, argparse, sys, re, magic, gzip, time, smtplib, socket, signal
   from email.mime.multipart import MIMEMultipart
   from email.mime.text import MIMEText
 except ImportError:
-  display_message("One or more modules is unavailable, please make sure these libraries are avaiable: os, argparse, sys, re, magic, gzip, time, smtplib, email, socket")
+  display_message("One or more modules is unavailable, please make sure these libraries are avaiable: os, argparse, sys, re, magic, gzip, time, smtplib, email, socket, signal")
   sys.exit(1)
 
 
@@ -136,6 +136,7 @@ def zip_files(filelist, dryrun=False):
       output_size = os.path.getsize(zip_name)       # Calculate the file size of the newly compressed file
       compressed_files.append(filename)                    # Add to list of successfully compressed files
       saved_space += input_size - output_size
+      time.sleep(5)
     input_file.close()
     output_file.close()
     if dryrun:                                      # For dry runs we keep the file and delete the compressed file
@@ -248,6 +249,10 @@ def createDaemon():
 
   return(0)
 
+def user_stoppage(sig, frame):
+  display_message("Stopping program on user request")
+  exit(3)
+
 # if __name__ == "__main__":
 #    retCode = createDaemon()
 #    procParams = """
@@ -282,6 +287,7 @@ def main():
   10. Email the report to the passed email address.
   """
   createDaemon()
+  signal.signal(signal.SIGTERM, user_stoppage)
   args = parse_arguments()
   dir_name = args.parse_args().dir_name
   if dir_name[-1] == '/':
