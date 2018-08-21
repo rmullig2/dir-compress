@@ -3,7 +3,6 @@ def display_message(message):
   """
   This runction displays status messages to the screen.
   """
-  # print time.ctime() + " " + message
   program_log = open("/tmp/dircompress.txt", 'a')
   program_log.write(time.ctime() + " " + message + "\n")
   program_log.close
@@ -204,14 +203,14 @@ def send_report(email):
     display_message("Failed when attempting to send the email")
     
 def createDaemon():
-  """Detach a process from the controlling terminal and run it in the
-   background as a daemon.
-   """
-  UMASK = 0         # File mode creation mask of the daemon.
-  WORKDIR = "/"     # Default working directory for the daemon.
-  MAXFD = 1024      # Default maximum for the number of available file descriptors.
+  """
+  This function allows the script to run as a daemon by detaching it from a terminal
+  """
+  UMASK = 0         # Do not restrict the permissions of files created by script
+  WORKDIR = "/"     # This is used to ensure that a volume umount will not be prevented by this script
+  MAXFD = 1024      # Default maximum for the number of available file descriptors
 
-  if (hasattr(os, "devnull")):    # The standard I/O file descriptors are redirected to /dev/null by default.
+  if (hasattr(os, "devnull")):    # This is used to redirect standard I/O
     REDIRECT_TO = os.devnull
   else:
     REDIRECT_TO = "/dev/null"
@@ -219,12 +218,12 @@ def createDaemon():
   try:
     pid = os.fork()
   except OSError, e:
-    raise Exception, "%s [%d]" % (e.strerror, e.errno)
+    raise Exception, "%s [%d]" % (e.strerror, e.errno)    # Serious system problem if fork command fails
 
-  if (pid == 0):	# The first child.
+  if (pid == 0):	# Fork one child process
     os.setsid()
     try:
-       pid = os.fork()	# Fork a second child.
+       pid = os.fork()	# Fork a second child process
     except OSError, e:
        raise Exception, "%s [%d]" % (e.strerror, e.errno)
 
@@ -240,10 +239,10 @@ def createDaemon():
   if (maxfd == resource.RLIM_INFINITY):
     maxfd = MAXFD
   
-  for fd in range(0, maxfd):
+  for fd in range(0, maxfd):      # Closing all open files
     try:
       os.close(fd)
-    except OSError:	# ERROR, fd wasn't open to begin with (ignored)
+    except OSError:	# Ignore file descriptors that are not open
       pass
 
   os.open(REDIRECT_TO, os.O_RDWR)	# standard input (0)
@@ -258,7 +257,7 @@ def user_stoppage(sig, frame):
 
 def main():
   """
-  The main function follows these steps:
+  The main function follows these steps after daemon is created:
   1. Parse the arguments passed in with the script execution.
   2. Strip trailing / from path name if specified.
   3. Save the arguments passsed into varialbes.
@@ -275,20 +274,20 @@ def main():
   display_message("")
   display_message("Starting directory compression")
   display_message("-------------------------------")
-  args = parse_arguments()
+  args = parse_arguments()                        # Step 1
   dir_name = args.parse_args().dir_name
-  if dir_name[-1] == '/':
+  if dir_name[-1] == '/':                         # Step 2
     dir_name = dir_name[:-1]
   email = args.parse_args().email
-  file_size = args.parse_args().file_size
+  file_size = args.parse_args().file_size         # Step 3
   DRYRUN = args.parse_args().dry_run
-  check_arguments(dir_name, email, file_size)
-  file_size = convert_size(file_size)
-  filelist = get_files(dir_name)
-  [too_small_files, small_ratio_files, good_files] = create_lists(filelist, file_size)
-  [compressed_files, saved_space] = zip_files(good_files, DRYRUN)
-  create_report(compressed_files, saved_space, small_ratio_files, dir_name)
-  send_report(email)
+  check_arguments(dir_name, email, file_size)     # Step 4
+  file_size = convert_size(file_size)             # Step 5
+  filelist = get_files(dir_name)                  # Step 6
+  [too_small_files, small_ratio_files, good_files] = create_lists(filelist, file_size)        # Step 7
+  [compressed_files, saved_space] = zip_files(good_files, DRYRUN)                             # Step 8
+  create_report(compressed_files, saved_space, small_ratio_files, dir_name)                   # Step 9
+  send_report(email)                              # Step 10
   
 if __name__ == '__main__':
   main()
