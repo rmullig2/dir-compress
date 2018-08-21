@@ -198,6 +198,74 @@ def send_report(email):
     server.sendmail(hostname, email, message.as_string())
   except:
     display_message("Failed when attempting to send the email")
+    
+def createDaemon():
+  """Detach a process from the controlling terminal and run it in the
+   background as a daemon.
+   """
+  UMASK = 0         # File mode creation mask of the daemon.
+  WORKDIR = "/"     # Default working directory for the daemon.
+  MAXFD = 1024      # Default maximum for the number of available file descriptors.
+
+  if (hasattr(os, "devnull")):    # The standard I/O file descriptors are redirected to /dev/null by default.
+    REDIRECT_TO = os.devnull
+  else:
+    REDIRECT_TO = "/dev/null"
+
+  try:
+    pid = os.fork()
+  except OSError, e:
+    raise Exception, "%s [%d]" % (e.strerror, e.errno)
+
+  if (pid == 0):	# The first child.
+    os.setsid()
+    try:
+       pid = os.fork()	# Fork a second child.
+    except OSError, e:
+       raise Exception, "%s [%d]" % (e.strerror, e.errno)
+
+    if (pid == 0):	# The second child.
+      os.chdir(WORKDIR)
+      os.umask(UMASK)
+    else:
+      os._exit(0)	# Exit parent (the first child) of the second child.
+  else:
+    os._exit(0)	# Exit parent of the first child.
+  import resource		# Resource usage information.
+  maxfd = resource.getrlimit(resource.RLIMIT_NOFILE)[1]
+  if (maxfd == resource.RLIM_INFINITY):
+    maxfd = MAXFD
+  
+  for fd in range(0, maxfd):
+    try:
+      os.close(fd)
+    except OSError:	# ERROR, fd wasn't open to begin with (ignored)
+      pass
+
+  os.open(REDIRECT_TO, os.O_RDWR)	# standard input (0)
+  os.dup2(0, 1)			# standard output (1)
+  os.dup2(0, 2)			# standard error (2)
+
+  return(0)
+
+# if __name__ == "__main__":
+#    retCode = createDaemon()
+#    procParams = """
+#    return code = %s
+#    process ID = %s
+#    parent process ID = %s
+#    process group ID = %s
+#    session ID = %s
+#    user ID = %s
+#    effective user ID = %s
+#    real group ID = %s
+#    effective group ID = %s
+#    """ % (retCode, os.getpid(), os.getppid(), os.getpgrp(), os.getsid(0),
+#    os.getuid(), os.geteuid(), os.getgid(), os.getegid())
+# 
+#    open("createDaemon.log", "w").write(procParams + "\n")
+# 
+#    sys.exit(retCode)
 
 def main():
   """
@@ -213,6 +281,7 @@ def main():
   9. Create the report containing the compressed file, files with a low compression ratio, and tht total space saved.
   10. Email the report to the passed email address.
   """
+  createDaemon()
   args = parse_arguments()
   dir_name = args.parse_args().dir_name
   if dir_name[-1] == '/':
