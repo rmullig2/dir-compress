@@ -3,7 +3,10 @@ def display_message(message):
   """
   This runction displays status messages to the screen.
   """
-  print time.ctime() + " " + message
+  # print time.ctime() + " " + message
+  program_log = open("/tmp/dircompress.txt", 'a')
+  program_log.write(time.ctime() + " " + message + "\n")
+  program_log.close
 
 try:
   import os, argparse, sys, re, magic, gzip, time, smtplib, socket, signal
@@ -253,25 +256,6 @@ def user_stoppage(sig, frame):
   display_message("Stopping program on user request")
   exit(3)
 
-# if __name__ == "__main__":
-#    retCode = createDaemon()
-#    procParams = """
-#    return code = %s
-#    process ID = %s
-#    parent process ID = %s
-#    process group ID = %s
-#    session ID = %s
-#    user ID = %s
-#    effective user ID = %s
-#    real group ID = %s
-#    effective group ID = %s
-#    """ % (retCode, os.getpid(), os.getppid(), os.getpgrp(), os.getsid(0),
-#    os.getuid(), os.geteuid(), os.getgid(), os.getegid())
-# 
-#    open("createDaemon.log", "w").write(procParams + "\n")
-# 
-#    sys.exit(retCode)
-
 def main():
   """
   The main function follows these steps:
@@ -286,8 +270,11 @@ def main():
   9. Create the report containing the compressed file, files with a low compression ratio, and tht total space saved.
   10. Email the report to the passed email address.
   """
-  createDaemon()
-  signal.signal(signal.SIGTERM, user_stoppage)
+  createDaemon()                                  # Allow program to run as a daemon
+  signal.signal(signal.SIGTERM, user_stoppage)    # Handles the sigterm signal sent
+  display_message("")
+  display_message("Starting directory compression")
+  display_message("-------------------------------")
   args = parse_arguments()
   dir_name = args.parse_args().dir_name
   if dir_name[-1] == '/':
