@@ -26,8 +26,7 @@ def parse_arguments():
   parser.add_argument('-d', action='store', dest='dir_name', help='Specifies the directory for compression', required=True)
   parser.add_argument('-e', action='store', dest='email', help='Specifies the email address', required=True)
   parser.add_argument('-s', action='store', dest='file_size', help='Specifies the minimum file size to compress: NUMBER[K|M|G]', required=True)
-  parser.add_argument('--dry-run', action='store_true', default=False, dest='dry_run',
-                    help='Add this switch to show saved space without compressing')
+  parser.add_argument('--dry-run', action='store_true', default=False, dest='dry_run', help='Add this switch to show saved space without compressing')
   return parser
 
 def check_arguments(dir_name, email, file_size):
@@ -269,11 +268,6 @@ def main():
   9. Create the report containing the compressed file, files with a low compression ratio, and tht total space saved.
   10. Email the report to the passed email address.
   """
-  createDaemon()                                  # Allow program to run as a daemon
-  signal.signal(signal.SIGTERM, user_stoppage)    # Handles the sigterm signal sent
-  display_message("")
-  display_message("Starting directory compression")
-  display_message("-------------------------------")
   args = parse_arguments()                        # Step 1
   dir_name = args.parse_args().dir_name
   if dir_name[-1] == '/':                         # Step 2
@@ -282,6 +276,11 @@ def main():
   file_size = args.parse_args().file_size         # Step 3
   DRYRUN = args.parse_args().dry_run
   check_arguments(dir_name, email, file_size)     # Step 4
+  createDaemon()                                  # Allow program to run as a daemon
+  signal.signal(signal.SIGTERM, user_stoppage)    # Handles the sigterm signal sent
+  display_message("")
+  display_message("Starting directory compression")
+  display_message("-------------------------------")
   file_size = convert_size(file_size)             # Step 5
   filelist = get_files(dir_name)                  # Step 6
   [too_small_files, small_ratio_files, good_files] = create_lists(filelist, file_size)        # Step 7
