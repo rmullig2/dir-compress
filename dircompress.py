@@ -137,7 +137,6 @@ def zip_files(filelist, dryrun=False):
       output_size = os.path.getsize(zip_name)       # Calculate the file size of the newly compressed file
       compressed_files.append(filename)                    # Add to list of successfully compressed files
       saved_space += input_size - output_size
-      time.sleep(5)
     input_file.close()
     output_file.close()
     if dryrun:                                      # For dry runs we keep the file and delete the compressed file
